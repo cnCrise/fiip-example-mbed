@@ -1,0 +1,34 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start JLinkGDBServer",
+      "type": "process",
+      "command": "JLinkGDBServer",
+      "args": [
+        "-device",
+        "STM32F103C8",
+        "-If",
+        "SWD"
+      ]
+    },
+    {
+      "label": "compile",
+      "type": "shell",
+      "command": "mbed",
+      "args": [
+        "compile",
+        "-t",
+        "GCC_ARM",
+        "-m",
+        "NUCLEO_F103RB"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}

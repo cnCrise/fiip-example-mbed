@@ -1,0 +1,53 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C++ Launch",
+      "type": "cppdbg",
+      "request": "launch",
+      "targetArchitecture": "arm", //虽然官方说弃用了，但实际上必须指明
+      "program": "${workspaceRootFolderName}",
+      "args": [""],
+      "stopAtEntry": true,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": true, //false
+      "MIMode": "gdb",
+      "miDebuggerPath": "/opt/compilers/gcc-arm-none-eabi/bin/arm-none-eabi-gdb",
+      //"debugServerPath": "JLinkGDBServer",
+      //"debugServerArgs": "-device STM32F103C8 -If SWD",
+      //"serverLaunchTimeout": 20000,
+      //"serverStarted": "GDB\\ server\\ started",
+      "preLaunchTask": "compile",
+      "setupCommands": [
+        {
+          "text": "-enable-pretty-printing",
+          "description": "Enable pretty-printing for gdb",
+          "ignoreFailures": true
+        }
+      ],
+      "launchCompleteCommand": "None",
+      "miDebuggerServerAddress": "localhost:2331",
+      "customLaunchSetupCommands": [
+        { "text": "target remote :2331", "description": "connect to target", "ignoreFailures": false },
+        {
+          "text": "file ${workspaceRoot}/BUILD/NUCLEO_F103RB/GCC_ARM/${workspaceRootFolderName}.elf",
+          "description": "load file",
+          "ignoreFailures": false
+        },
+        { "text": "load", "description": "flash target", "ignoreFailures": false },
+        { "text": "monitor reset", "description": "reset MCU", "ignoreFailures": false },
+        { "text": "b main", "description": "set breakpoints at main", "ignoreFailures": false }
+      ]
+      /*
+            "logging": {
+                "moduleLoad": true,
+                "trace": true,
+                "engineLogging": true,
+                "programOutput": true,
+                "exceptions": true
+            },
+            */
+    }
+  ]
+}
