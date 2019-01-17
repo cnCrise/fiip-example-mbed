@@ -1,6 +1,4 @@
 #include "./linkUdp.h"
-#include "EthernetInterface.h"
-#include "mbed.h"
 void linkUdp_start(LinkServerStruct* self);
 void linkUdp_send(LinkServerStruct* self,
                   uint8_t* data,
