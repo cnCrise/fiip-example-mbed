@@ -7,11 +7,10 @@ void linkUdp_send(LinkServerStruct* self,
                   uint16_t dataLen,
                   LinkCfgStruct* link);
 
-static void* thread_recvData(void* x);
+static void thread_recvData(void* x);
 
-EthernetInterface net;
-static UDPSocket sock;
-static socklen_t sockLen = sizeof(struct sockaddr);
+NetworkInterface* net;
+UDPSocket sock;
 
 void startUdp(uint8_t* ip, uint32_t port) {
   LinkCfgStruct* link = (LinkCfgStruct*)malloc(sizeof(LinkCfgStruct));
@@ -34,11 +33,15 @@ void startUdp(uint8_t* ip, uint32_t port) {
 void linkUdp_start(LinkServerStruct* self) {
   LinkCfgStruct* link = self->link;
 
-  if (0 != net.connect()) {
-    printf("Error connecting\n");
-    return -1;
+  net = NetworkInterface::get_default_instance();
+  if (!net) {
+    printf("Error! No network inteface found.\n");
   }
-  sock = UDPSocket(&net);
+
+  if (0 != net->connect()) {
+    printf("Error connecting\n");
+  }
+  sock.open(net);
 
   /* 绑定socket */
   if (sock.bind(link->port) < 0) {
@@ -57,19 +60,17 @@ void linkUdp_send(LinkServerStruct* self,
 
   if (sock.sendto(clientCfg, data, dataLen) < 0) {
     printf("Error sending data\n");
-    return -1;
   }
 }
 
-void* thread_recvData(void* x) {
+void thread_recvData(void* x) {
   LinkServerStruct* self = (LinkServerStruct*)x;
-  SocketAddress* clientCfg;
+  SocketAddress clientCfg;
   uint8_t recvBuf[256];
   uint16_t recvNum;
 
   while (1) {
-    ntp_packet in_data;
-    recvNum = sock.recvfrom(clientCfg, recvBuf, 256);
+    recvNum = sock.recvfrom(&clientCfg, recvBuf, 256);
     if (recvNum < 0) {
       perror("recvfrom error:");
       break;
@@ -77,13 +78,11 @@ void* thread_recvData(void* x) {
     LinkCfgStruct* srcLink = (LinkCfgStruct*)malloc(sizeof(LinkCfgStruct));
     srcLink->type = linkType_udp;
     srcLink->address = (uint8_t*)malloc(4);
-    memcpy(srcLink->address, (uint8_t*)clientCfg->get_addr(), 4);
-    srcLink->port = clientCfg->get_port();
+    memcpy(srcLink->address, (uint8_t*)clientCfg.get_addr().bytes, 4);
+    srcLink->port = clientCfg.get_port();
     self->recv(recvBuf, recvNum, srcLink);
   }
-  free(clientCfg);
   sock.close();
-  net.disconnect();
+  net->disconnect();
   perror("LinkUdp stop");
-  return NULL;
 }
