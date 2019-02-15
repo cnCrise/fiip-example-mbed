@@ -6,9 +6,9 @@ void linkUdp_send(LinkServerStruct* self,
                   LinkCfgStruct* link);
 
 static void thread_recvData(void* x);
-
-NetworkInterface* net;
-UDPSocket sock;
+static NetworkInterface* net;
+static UDPSocket sock;
+static Thread thread;
 
 void startUdp(uint8_t* ip, uint32_t port) {
   LinkCfgStruct* link = (LinkCfgStruct*)malloc(sizeof(LinkCfgStruct));
@@ -46,7 +46,6 @@ void linkUdp_start(LinkServerStruct* self) {
     perror("bind error:");
   }
 
-  Thread thread;
   thread.start(callback(thread_recvData, self));
 }
 

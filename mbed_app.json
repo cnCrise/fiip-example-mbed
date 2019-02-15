@@ -2,8 +2,8 @@
   "target_overrides": {
     "*": {
       "nsapi.default-wifi-security": "WPA_WPA2",
-      "nsapi.default-wifi-ssid": "\"MeiTing\"",
-      "nsapi.default-wifi-password": "\"Meiting777\""
+      "nsapi.default-wifi-ssid": "\"rise_p10p\"",
+      "nsapi.default-wifi-password": "\"12010719\""
     }
   }
 }
