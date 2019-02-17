@@ -42,6 +42,8 @@ void Config::reset() {
   this->setMyStatus(1, 0x00);
   if (nvstore.reset() != NVSTORE_SUCCESS) {
     perror("nvstore reset");
+  }else{
+    printf("nvstore reset success.\n");
   }
   this->setMyStatus(0, 0x9A);
 }
@@ -55,12 +57,12 @@ void Config::setMyStatus(uint8_t index, uint8_t status) {
 void Config::setMyId(uint8_t* id) {
   memcpy(this->myId, id, IdLen);
   if (nvstore.set(1, IdLen, this->myId) != NVSTORE_SUCCESS) {
-    perror("nvstore setMyStatus");
+    perror("nvstore setMyId");
   }
 }
 void Config::setMyKey(uint8_t* key) {
   memcpy(this->myKey, key, KeyLen);
   if (nvstore.set(2, KeyLen, this->myKey) != NVSTORE_SUCCESS) {
-    perror("nvstore setMyStatus");
+    perror("nvstore setMyKey");
   }
 }

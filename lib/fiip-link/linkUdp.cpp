@@ -36,12 +36,7 @@ void linkUdp_start(LinkServerStruct* self) {
     printf("Error! No network inteface found.\n");
   }
 
-  if (0 != net->connect()) {
-    printf("Error connecting\n");
-  }
   sock.open(net);
-
-  /* 绑定socket */
   if (sock.bind(link->port) < 0) {
     perror("bind error:");
   }
@@ -80,6 +75,5 @@ void thread_recvData(void* x) {
     self->recv(recvBuf, recvNum, srcLink);
   }
   sock.close();
-  net->disconnect();
   perror("LinkUdp stop");
 }
