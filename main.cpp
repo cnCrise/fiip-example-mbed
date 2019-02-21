@@ -15,6 +15,7 @@ static uint8_t cmd_getId[] = {0x70, 0x11};
 static uint8_t cmd_login[] = {0x70, 0x12};
 static uint8_t cmd_heart[] = {0x70, 0x13};
 static uint8_t cmd_enterBinding[] = {0x70, 0x16};
+static uint8_t cmd_setVarCurrent[] = {0x70, 0x21};
 static InterruptIn btn_wps(PB_3);
 static InterruptIn btn_cfg(PC_5);
 static DigitalOut led_status(PA_3, 1);
@@ -40,6 +41,20 @@ void fiip_connectCloud() {
            centerServer->address[3], centerServer->port);
     free(centerServer->address);
     free(centerServer);
+  }
+}
+void setVar(uint8_t key, uint8_t val) {
+  if (key == 0x01) {
+    led_link = val;
+    stdp_setVar(txd, stdp_field_cmd, cmd_setVarCurrent, 2);
+    memcpy(&cmd_body[0], config.myId, 8);
+    memcpy(&cmd_body[8], config.myKey, 4);
+    cmd_body[12] = 0x01;
+    cmd_body[13] = key;
+    cmd_body[14] = 0x01;
+    cmd_body[15] = val;
+    stdp_setVar(txd, stdp_field_body, cmd_body, 16);
+    fiip_send(txd->frame, fiip_centerId, NULL);
   }
 }
 
@@ -87,6 +102,18 @@ void funListener0x7812(Stdp_FieldStruct* msg) {
   stdp_setVar(txd, stdp_field_body, cmd_body, 3);
   fiip_send(txd->frame, msg->srcAddr, NULL);
 }
+void funListener0x7822(Stdp_FieldStruct* msg) {
+  if (msg->body[1] == 0x01) {
+    setVar(0x01, msg->body[3]);
+
+    msg->cmd[0] = 0xF8;
+    stdp_setVar(txd, stdp_field_cmd, msg->cmd, 2);
+    memcpy(&cmd_body[0], msg->index, 2);
+    cmd_body[2] = 0x00;
+    stdp_setVar(txd, stdp_field_body, cmd_body, 3);
+    fiip_send(txd->frame, msg->srcAddr, NULL);
+  }
+}
 
 void on_net_change(nsapi_event_t status, intptr_t param) {
   if (status == NSAPI_EVENT_CONNECTION_STATUS_CHANGE) {
@@ -133,8 +160,7 @@ void handle_resetStore() {
   system_reset();
 }
 void handle_ledSwitch() {
-  led_status = !led_status;
-  led_link = !led_link;
+  setVar(0x01, !led_link);
 }
 void handle_enterBinding() {
   uint8_t bindingCode[4] = {0x30, 0x30, 0x30, 0x30};
@@ -177,6 +203,7 @@ int main(int argc, char* argv[]) {
   stdp_addListener(0xF016, funListener0xF016);
   stdp_addListener(0x7811, funListener0x7811);
   stdp_addListener(0x7812, funListener0x7812);
+  stdp_addListener(0x7822, funListener0x7822);
 
   wait(1);
   if (config.myStatus[1] != 0x89) {
