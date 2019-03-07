@@ -1,9 +1,9 @@
 #include "./config.h"
-#include "./handle.h"
 #include "./lib/fiip-base/fiip.h"
 #include "./lib/fiip-link/linkSerial.h"
 #include "./lib/fiip-link/linkUdp.h"
 #include "./lib/fiip-protocol/stdp.h"
+#include "./lib/riselib/flagHandle.h"
 #include "mbed.h"
 
 #define handleFlag_resetStore 1
@@ -141,17 +141,17 @@ void on_net_change(nsapi_event_t status, intptr_t param) {
 void on_btn_wps_fall() {
   wait(1);
   if (btn_wps == 1) {
-    handle_setFlag(handleFlag_ledSwitch);
+    flagHandle_setFlag(handleFlag_ledSwitch);
   } else {
-    handle_setFlag(handleFlag_resetWifi);
+    flagHandle_setFlag(handleFlag_resetWifi);
   }
 }
 void on_btn_cfg_fall() {
   wait(1);
   if (btn_cfg == 1) {
-    handle_setFlag(handleFlag_enterBinding);
+    flagHandle_setFlag(handleFlag_enterBinding);
   } else {
-    handle_setFlag(handleFlag_resetStore);
+    flagHandle_setFlag(handleFlag_resetStore);
   }
 }
 
@@ -184,14 +184,15 @@ int main(int argc, char* argv[]) {
   config.init();
   btn_wps.fall(on_btn_wps_fall);
   btn_cfg.fall(on_btn_cfg_fall);
-  handle_addListener(handleFlag_resetStore, handle_resetStore);
-  handle_addListener(handleFlag_ledSwitch, handle_ledSwitch);
-  handle_addListener(handleFlag_enterBinding, handle_enterBinding);
-  handle_addListener(handleFlag_resetWifi, handle_resetWifi);
+  flagHandle_init();
+  flagHandle_addListener(handleFlag_resetStore, handle_resetStore);
+  flagHandle_addListener(handleFlag_ledSwitch, handle_ledSwitch);
+  flagHandle_addListener(handleFlag_enterBinding, handle_enterBinding);
+  flagHandle_addListener(handleFlag_resetWifi, handle_resetWifi);
   wait(1);
 
   fiip_init();
-  fiip_setId(config.myId, config.myKey);
+  fiip_setId(config.myId);
   // startSerial(dev, 9600);
   startUdp(myIP, 16464);
   fiip_connectCloud();
@@ -230,7 +231,7 @@ int main(int argc, char* argv[]) {
     if (1) {
       led_status = !led_status;
 
-      handle_solve();
+      flagHandle_solve();
     }
     if (rtime % 90 == 0) {
       int8_t rssi = net->wifiInterface()->get_rssi();
