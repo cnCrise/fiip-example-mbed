@@ -59,7 +59,7 @@ void thread_recvData(void* x) {
   LinkServerStruct* self = (LinkServerStruct*)x;
   SocketAddress clientCfg;
   uint8_t recvBuf[256];
-  uint16_t recvNum;
+  int16_t recvNum;
 
   while (1) {
     recvNum = sock.recvfrom(&clientCfg, recvBuf, 256);
