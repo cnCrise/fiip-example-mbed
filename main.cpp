@@ -177,6 +177,7 @@ int main(int argc, char* argv[]) {
   static uint8_t myIP[4] = {0x00, 0x00, 0x00, 0x00};
   static uint8_t dev[] = serialType_usb;
   printf("\n--- system is running ---\n");
+  mempool_init(0x1000);
   txd = stdp_new();
   net = NetworkInterface::get_default_instance();
   net->attach(on_net_change);

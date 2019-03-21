@@ -13,8 +13,6 @@
 extern "C" {
 #endif
 
-#define linkType_udp 0x30
-
 void startUdp(uint8_t* ip, uint32_t port);
 
 #ifdef __cplusplus

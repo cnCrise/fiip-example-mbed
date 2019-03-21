@@ -12,7 +12,6 @@
 extern "C" {
 #endif
 
-#define linkType_serial 0x31
 #define serialType_usb "usb"
 #define serialType_uart1 "uart1"
 #define serialType_uart2 "uart2"
