@@ -12,12 +12,13 @@
 extern "C" {
 #endif
 
-#define serialType_usb "usb"
-#define serialType_uart1 "uart1"
-#define serialType_uart2 "uart2"
-#define serialType_uart3 "uart3"
+#define serialType_usb (uint8_t*)"usb"
+#define serialType_uart1 (uint8_t*)"uart1"
+#define serialType_uart2 (uint8_t*)"uart2"
+#define serialType_uart3 (uint8_t*)"uart3"
 
-void startSerial(uint8_t* dev, uint32_t speed);
+LinkCfgStruct* linkSerial_startServer(uint8_t* dev, uint32_t speed);
+LinkCfgStruct* linkSerial_startClient(uint8_t* dev, uint32_t speed);
 
 #ifdef __cplusplus
 }

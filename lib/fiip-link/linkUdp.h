@@ -13,7 +13,8 @@
 extern "C" {
 #endif
 
-void startUdp(uint8_t* ip, uint32_t port);
+LinkCfgStruct* linkUdp_startServer(uint8_t* ip, uint32_t port);
+LinkCfgStruct* linkUdp_startClient(uint8_t* ip, uint32_t port);
 
 #ifdef __cplusplus
 }
