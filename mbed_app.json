@@ -1,4 +1,5 @@
 {
+  "macros": ["DEBUG"],
   "target_overrides": {
     "*": {
       "nsapi.default-wifi-security": "WPA_WPA2",

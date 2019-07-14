@@ -1,0 +1,11 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: rise0chen/mbed
+    steps:
+      - checkout
+      - run: mbed update
+      - run: mbed compile -t GCC_ARM -m REALTEK_RTL8195AM -v > ./log_build
+      - run: upToQn.py ./log_build mbed/log_build.txt
+      - run: upToQn.py ./BUILD/REALTEK_RTL8195AM/GCC_ARM/project.bin mbed/fiip-example-mbed.bin
