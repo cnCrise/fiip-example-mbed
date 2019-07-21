@@ -70,7 +70,8 @@ void handle_resetStore() {
   system_reset();
 }
 void handle_ledSwitch() {
-  setVar(0x01, !led_status);
+  uint8_t val = led_status ? 1 : 0;
+  setVar(0x01, val);
 }
 void handle_enterBinding() {
   uint8_t bindingCode[4] = {0x30, 0x30, 0x30, 0x30};
@@ -101,10 +102,10 @@ int main(int argc, char* argv[]) {
 
   fiip_init();
   fiip_setId(config.myId);
-  fiipListener_start();
   // linkSerial_startServer(dev, 9600);
   fiip_connectCloud();
   fiipCloud_init(config.myId, config.myKey);
+  fiipListener_start();
 
   wait(1);
   if (config.myStatus[1] != 0x89) {

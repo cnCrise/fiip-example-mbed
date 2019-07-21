@@ -9,7 +9,7 @@ uint8_t vVal_led[1] = {0x00};
 
 void setVar(uint8_t key, uint8_t val) {
   if (key == 0x01) {
-    led_status = val;
+    led_status = !val;
 
     vVal_led[0] = val;
     fiipCloud_setActualVar(config.myId, config.myKey, kVal_led, kLen_led,
